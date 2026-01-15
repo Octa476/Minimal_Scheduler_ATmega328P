@@ -16,9 +16,30 @@
 #define STACK_BUFF 0x100
 
 // Specify which tasks you want to be run on the microcontroller.
-const uint8_t tasks_id[] = {1, 2};
-static char curr_thread_id = 0;
+const void (*tasks_function[]) () = {task1, task2};
+static char curr_thread_indx = 0;
 static Thread_Control_Block threads[4];
+
+
+void schedule_threads(short old_stack) {
+  int num_tasks = sizeof(tasks_function) / sizeof(void (*) ());
+  // It is the first time this thread will run.
+  if (threads[curr_thread_indx].thread_state == 2) {
+    threads[curr_thread_indx].thread_state = 1;
+  } else if (threads[curr_thread_indx].thread_state == 1) {
+    // This thread was running.
+    threads[curr_thread_indx].thread_state = 0; // ready, but not running
+    threads[curr_thread_indx].stack_pointer = old_stack; // save the old stack pointer
+
+    // Go to the next thread.
+    curr_thread_indx = (curr_thread_indx + 1) % num_tasks;
+
+    // The first time this thread will run.
+    if (threads[curr_thread_indx].thread_state == 2) {
+      threads[curr_thread_indx].thread_state = 1;
+    }
+  }
+}
 
 ISR(TIMER1_OVF_vect)
 {
@@ -27,11 +48,11 @@ ISR(TIMER1_OVF_vect)
 }
 
 void Threads_init() {
-  int num_tasks = sizeof(tasks_id);
+  int num_tasks = sizeof(tasks_function);
   for (int i = 0; i < num_tasks; i++) {
-    threads[tasks_id[i]].thread_id = tasks_id[i];
-    threads[tasks_id[i]].thread_state = 2;
-    threads[tasks_id[i]].stack_pointer = STACK_UP_LIMIT - (tasks_id[i] + 1) * STACK_BUFF;
+    threads[i].thread_id = i;
+    threads[i].thread_state = 2;
+    threads[i].stack_pointer = STACK_UP_LIMIT - (i + 2) * STACK_BUFF;
   }
 }
 
@@ -41,9 +62,9 @@ int main() {
   interrupts();
   Serial.begin(9600);
 
-  int num_tasks = sizeof(tasks_id);
+  int num_tasks = sizeof(tasks_function);
   Serial.println((uint16_t)(&num_tasks), HEX);
-  Serial.println((uint16_t)(&curr_thread_id), HEX);
+  Serial.println((uint16_t)(&curr_thread_indx), HEX);
   Serial.println((uint16_t)(&threads), HEX);
 
   // Set Timer1 to give an interupt every 100ms for the time being.
@@ -53,7 +74,7 @@ int main() {
   TCNT1 = 40535;        // Timer Preloading
   TIMSK1 |= B00000001;  // Enable Timer Overflow Interrupt
 
-  // Some way to debug the timer interrupt using the buildin led.
+  // Some way to debug the timer interrupt using the builtin led.
   pinMode(LED_BUILTIN, OUTPUT);
 
   // Init the threads control blocks.
