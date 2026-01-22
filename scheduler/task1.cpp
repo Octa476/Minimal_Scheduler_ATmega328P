@@ -2,9 +2,12 @@
 
 // __attribute__((naked, noreturn))
 void task1() {
+    pinMode(2, OUTPUT);
     while (1) {
-        Serial.println("buna");
-        delay(1000);
+        // Serial.println("buna");
+        // interrupts();
+        delay(50);
+        digitalWrite(2, !digitalRead(2));
         // int i = 0;
         // while (i < 20000) {
         //     i++;
@@ -13,7 +16,7 @@ void task1() {
         //         j++;
         //     }
         // }
-        digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
+        // digitalWrite(LED_BUILTIN, !digitalRead(LED_BUILTIN));
     }
     // asm volatile (
     //     // LED_BUILTIN = PB5
