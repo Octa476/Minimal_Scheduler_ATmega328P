@@ -23,7 +23,7 @@ For the scheduling scheme I chose is Round Robin because is simple and easy to i
 and the scheduler chooses which thread will be run next, saves the current context and change everything in order to make the new thread able to resume its prior
 interrupted execution.  
 
-## The threads
+## The Threads
 The user of this scheduler is free to implement its own task, every classic Arduino function is working except for the ones that use Timer1, because this timer is 
 used to wakeup the scheduler and has some strict time requirements and setting constrains.
 
