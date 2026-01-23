@@ -1,5 +1,6 @@
 .global start_task
 
+; void start_task(short stack_pointer, short address, short old_stack_pointer_addr);
 start_task:
   in r0, 0x3F
   push r0 ; SREG
@@ -50,12 +51,12 @@ start_task:
   ST Z, r16
 
   ; Change stack.
-  out 0x3D, r24    ; SPL
-  out 0x3E, r25    ; SPH
-  clr r0            ; r1 = 0
-  ; ldi r16, 0x80     ; I = 1
-  ; out 0x3F, r16     ; SREG
+  out 0x3D, r24 ; SPL
+  out 0x3E, r25 ; SPH
+  clr r0 ; r0 = 0
+  ; ldi r16, 0x80 ; I = 1
+  ; out 0x3F, r16 ; SREG
   sei 
-  mov r30, r22      ; Z = task address
+  mov r30, r22 ; Z = task address
   mov r31, r23
   ijmp

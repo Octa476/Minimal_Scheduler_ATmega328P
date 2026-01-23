@@ -2,8 +2,7 @@
 I will try to build a minimal scheduler on the ATmega328P microcontroller using the arduino IDE and some AVR assembly.
 
 # My idea
-Maybe my idea won't work, but I will try to spell it in this file for better organization.
-I already created a structure for the whole project with all the folders and files that are necessary.
+The idea is that I want to make multiprogramming in this environment possible by using timer interrupts and a simple Round Robin scheduling scheme.
 
 ## Microcontroller usefull specifications
 Some of the specifications of the microcontroller used by de Arduino - ATmega328P are:
@@ -19,30 +18,18 @@ mode
 - External and internal interrupt sources
 
 ## The Scheduler
-In this project I will try to build a preemptive minimal scheduler that will enable multiprogramming in an Arduino Uno environment. When the "minimal os" will start a single "thread" will be launched and that thread will take the role of an interactive terminal from which other threads can be launched or terminated. These threads can represent different applications like ono that measures temperatures and displays it to an LCD, other that control some LEDs and so on. Some of the tasks will be created by myself, but a user of this project can create its own tasks(by programming one) and launch them into execution or terminate them.
-
-With the use of a timer interrupt the scheduler will be woken at a regular interval of time that can be set by the user. The features of the timers will be used to set this interval to a desired value and the whole schelduler awakening should be handled as a service interrupt routine.
-
-When the interrupt is given, the routine will start and the context of the current thread will be saved in a special structure.
-The "context" is a set that contains:
-- the value of all the general purpose registers
-- the value of the instruction pointer(instruction register)
-- the value of the current stack pointer and base stack pointer
-
-This "context switch" will be handled by an inline assembly routine, and after all the necessary information of the current thread is saved, the resources will be given to a new thread. All the information of the new context will be uploaded to the registers and the new thread will start running from where it was suspended in a past context switch.
-
-The schelduling algorithm I will use is Round Robin, because is easy to implement and it prevents starvation. Every thread will receive a slice of CPU time in a cyclic order, perfectly for my minimal schelduler.
-
-A thread will have the ability to return(to exit/to finish its execution), so when this happens the sheduler will free the resources that were allocated to that thread and update the necessary structures.
+The scheduling is done by a C/C++ function that changes the current context of the execution to another thread by using some assembly procedures.
+For the scheduling scheme I chose is Round Robin because is simple and easy to implement for this kind of demo project. Every thread has a slice of cpu time
+and the scheduler chooses which thread will be run next, saves the current context and change everything in order to make the new thread able to resume its prior
+interrupted execution.  
 
 ## The threads
-A main thread will be created at the start of the minimal os and this thread will act as the link between the user and the scheduler. From this terminal thread, the user will be able to launch into execution other threads or kill the running ones.
+The user of this scheduler is free to implement its own task, every classic Arduino function is working except for the ones that use Timer1, because this timer is 
+used to wakeup the scheduler and has some strict time requirements and setting constrains.
 
-Every thread will receive a slice of the SRAM and that slice will represent its whole stack, when a thread will try to go past its allocated stack I will try to build a mechanism that will be capable of detecting this overflow and kill the thread that violated the constrain.
-
-I still need to think how all of these things will work and especially how the global variables should be handled with no virtual memory, I need to study more these aspects.
 
 ## Conclusion
-I will try my best to build this whole system as a personal project and I hope I will learn a lot while doing it. 
+This is the first iteration of this project, I want to add so much more functionality, like tasks that can return, customizable scheduling settings, using a more clever
+scheduling algorithm, detecting if a task has overwritten the stack of another task and so much more.
 
 

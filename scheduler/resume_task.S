@@ -1,5 +1,6 @@
 .global resume_task
 
+; void resume_task(short old_stack_pointer_addr, short new_stack_pointer);
 resume_task:
   ; Push everything on the stack.
   in r0, 0x3F

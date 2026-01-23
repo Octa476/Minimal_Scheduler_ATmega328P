@@ -16,3 +16,10 @@ typedef struct {
   char thread_state;
 } Thread_Control_Block;
 
+// Function defined in .S files written in assembly.
+extern "C" {
+  void resume_task(short old_stack_pointer_addr, short new_stack_pointer);
+  void start_task(short stack_pointer, short address, short old_stack_pointer_addr);
+  void start_first_task(short stack_pointer, short address);
+}
+

@@ -1,11 +1,9 @@
 #include "task2.h"
 
+// The user can defines task2 here, functions that use timers are allowed, but not functions that use Timer1.
 void task2() {
     pinMode(3, OUTPUT);
     while (1) {
-        // digitalWrite(LED_BUILTIN, 0);
-        // Serial.println("siua");
-        // interrupts();
         delay(50);
         digitalWrite(3, !digitalRead(3));
     }
