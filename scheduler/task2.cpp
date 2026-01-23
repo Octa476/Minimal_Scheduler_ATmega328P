@@ -2,9 +2,9 @@
 
 // The user can defines task2 here, functions that use timers are allowed, but not functions that use Timer1.
 void task2() {
-    pinMode(3, OUTPUT);
+    pinMode(2, OUTPUT);
     while (1) {
         delay(50);
-        digitalWrite(3, !digitalRead(3));
+        digitalWrite(2, !digitalRead(2));
     }
 }

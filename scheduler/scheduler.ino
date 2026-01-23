@@ -82,7 +82,7 @@ void set_scheduler_wakeup() {
   // Set Timer1 to give an interupt every 100ms for the time being.
   TCCR1A = 0;  // Init Timer1
   TCCR1B = 0; // Init Timer1
-  TCCR1B |= B00000101; // Prescalar = 64
+  TCCR1B |= B00000001; // Prescalar = 64
   TCNT1 = 0xFFFF - time_slice * 16 * 1000 / 64; // Timer Preloading
   // Serial.println(TCNT1);
   TIMSK1 |= B00000001; // Enable Timer Overflow Interrupt
